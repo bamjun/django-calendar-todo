@@ -13,6 +13,8 @@ DB
 할일 테이블
 사용자 계정, 기간(날짜), 내용, 상태(완료, 미완료, 진행중), 작성시간
 
+# 노트
+[겔린더 api](https://ui.toast.com/tui-calendar)  
 
 
 # todo
