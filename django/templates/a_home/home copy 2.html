@@ -43,12 +43,12 @@
 <div class="layout">
   <div class="sidebar bg-blue-400">
     <ul>
-      <li><a href="#">🔵 Todo</a></li>
-      <li><a href="#">🟢 완료</a></li>
-      <li><a href="#">🟠 진행중</a></li>
-      <li><a id="monthly" href="#">월별</a></li>
-      <li><a id="weekly" href="#">주별</a></li>
-      <li><a id="daily" href="#">일별</a></li>
+      <li><a href="#">Todo</a></li>
+      <li><a href="#">완료</a></li>
+      <li><a href="#">진행중</a></li>
+      <li><a href="#">월별</a></li>
+      <li><a href="#">주별</a></li>
+      <li><a href="#">일별</a></li>
     </ul>
   </div>
   <div id="calendar"></div>
@@ -78,20 +78,7 @@
     defaultView: "week", // 월별 뷰로 설정
     taskView: true, // 할 일 목록 활성화
     scheduleView: true, // 일정 목록 활성화
-    template: {
-      monthDayName: function (dayname) {
-        // 여기에서는 단순히 요일명을 반환합니다.
-        return (
-          '<span class="calendar-week-dayname">' + dayname.label + "</span>"
-        );
-      },
-      monthDate: function (date) {
-        // 현재 날짜와 달력의 날짜가 일치하는지 확인
-        var today = tui.Calendar.Date.today();
-        var className = today.equals(date) ? "calendar-today" : "";
-        return '<span class="' + className + '">' + date.getDate() + "</span>";
-      },
-    },
+
     timezone: {
       usageStatistics: false,
       zones: [
@@ -110,18 +97,13 @@
     calendars: [
       {
         id: "cal1",
-        name: "Todo",
-        backgroundColor: "#1973B7",
+        name: "개인",
+        backgroundColor: "#03bd9e",
       },
       {
         id: "cal2",
-        name: "완료",
-        backgroundColor: "#3CD071",
-      },
-      {
-        id: "cal3",
-        name: "진행중",
-        backgroundColor: "#F96C33",
+        name: "직장",
+        backgroundColor: "#00a9ff",
       },
     ],
   };
@@ -145,7 +127,7 @@
     },
     {
       id: "event3",
-      calendarId: "cal3",
+      calendarId: "cal2",
       title: "휴가",
       start: "2024-04-06",
       end: "2024-04-06",
@@ -159,27 +141,6 @@
   calendar.setOptions({
     useFormPopup: true,
     useDetailPopup: true,
-  });
-
-  calendar.render();
-
-  // 월간 뷰로 변경
-  // 월간 뷰로 변경하는 버튼
-  const button_monthly = document.getElementById("monthly");
-  button_monthly.addEventListener("click", function () {
-    calendar.changeView("month");
-  });
-
-  // 주간 뷰로 변경하는 버튼
-  const button_weekly = document.getElementById("weekly");
-  button_weekly.addEventListener("click", function () {
-    calendar.changeView("week");
-  });
-
-  // 일간 뷰로 변경하는 버튼
-  const button_daily = document.getElementById("daily");
-  button_daily.addEventListener("click", function () {
-    calendar.changeView("day");
   });
 </script>
 
