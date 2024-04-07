@@ -1,26 +1,24 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.translation import gettext_lazy as _
 
 class Task(models.Model):
-    # Task 상태에 대한 Enum 클래스 정의
-    class Status(models.TextChoices):
-        TODO = 'TD', _('To Do')
-        IN_PROGRESS = 'IP', _('In Progress')
-        DONE = 'DN', _('Done')
+    event_id = models.CharField(max_length=10, unique=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    status = models.CharField(max_length=4)
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'))
-    title = models.CharField(max_length=255, verbose_name=_('Title'))
-    description = models.TextField(blank=True, verbose_name=_('Description'))
-    start_date = models.DateField(verbose_name=_('Start Date'))
-    end_date = models.DateField(verbose_name=_('End Date'))
-    status = models.CharField(max_length=2, choices=Status.choices, default=Status.TODO, verbose_name=_('Status'))
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created At'))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated At'))
-
-    class Meta:
-        verbose_name = _('Task')
-        verbose_name_plural = _('Tasks')
+    def save(self, *args, **kwargs):
+        if not self.event_id:  # 만약 event_id가 설정되지 않았다면
+            # Task 모델에서 가장 마지막 event_id를 가져와서 숫자를 추출
+            last_event = Task.objects.all().order_by('id').last()
+            if last_event:
+                last_number = int(last_event.event_id.replace('event', ''))  # 'event' 문자열 제거 후 숫자 변환
+                self.event_id = f'event{last_number + 1}'
+            else:
+                self.event_id = 'event1'  # 이전 이벤트가 없으면 'event1'로 설정
+        super().save(*args, **kwargs)  # 모델 저장
 
     def __str__(self):
-        return self.title
+        return str(self.user) + ' - ' + str(self.title)
