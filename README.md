@@ -1,3 +1,5 @@
+![alt text](images/markdown-calendar.gif)
+
 일정관리 프로젝트
 
 할일 추가, 수정, 삭제

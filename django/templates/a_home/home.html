@@ -6,7 +6,6 @@
 
 <style>
   .sidebar a {
-    padding: 10px 15px; /* 링크 패딩 */
     text-decoration: none; /* 링크 밑줄 제거 */
     font-size: 18px; /* 폰트 크기 */
     color: white; /* 폰트 색상 */
@@ -22,8 +21,7 @@
   }
 
   .sidebar {
-    padding-left: 3px;
-    width: 150px; /* 사이드바의 고정 넓이 */
+    width: 100%; /* 사이드바의 고정 넓이 */
     /* 기존 사이드바 스타일 */
     color: white;
   }
@@ -34,34 +32,63 @@
   }
 
   .layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 요소들을 높이 방향으로 중앙 정렬 */
+    height: calc(100vh - 5rem);
+    overflow: auto;
+  }
+
+  .list-ul {
+    display: flex;
+     justify-content: center; /*요소들 사이의 간격을 균등하게 배분 */
+  }
+
+  li {
     display: flex; /* flexbox 레이아웃 사용 */
-    /* flex-direction: column;  세로 방향으로 요소 정렬 */
-    height: calc(100vh - 5rem); /* 헤더 높이를 제외한 전체 높이 */
-    overflow: auto; /* 내용이 레이아웃을 초과할 경우 스크롤바 표시 */
+    flex-direction: column; /* 세로 방향으로 요소 정렬 */
+    margin-left: 10px;
   }
-  .btn-updown {
-    font-size: 12px;
-  }
+  
 </style>
 
 <div class="layout">
   <div class="sidebar bg-blue-400">
-    <ul>
-      <li id="view_today" style="text-align: center">2024-04-07</li>
-      <li><a href="#">🔵 Todo</a></li>
-      <li><a href="#">🟢 완료</a></li>
-      <li><a href="#">🟠 진행중</a></li>
+    <ul class="list-ul">
+      <li id="view_today">2024-04-07</li>
       <li><a id="monthly" href="#">월별</a></li>
       <li><a id="weekly" href="#">주별</a></li>
       <li><a id="daily" href="#">일별</a></li>
       <li>
         <button class="btn-updown" id="date_previous">◀️</button>
+      </li>
+      <li>
         <button class="btn-updown" id="date_next">▶️</button>
       </li>
     </ul>
   </div>
   <div id="calendar"></div>
 </div>
+
+
+<form method="post">
+  {% csrf_token %}
+  <label for="title">Title:</label>
+  <input type="text" id="title" name="title" required><br><br>
+  
+  <label for="start_date">Start Date:</label>
+  <input type="datetime-local" id="start_date" name="start_date" required><br><br>
+  
+  <label for="end_date">End Date:</label>
+  <input type="datetime-local" id="end_date" name="end_date" required><br><br>
+  
+  <label for="status">Status:</label>
+  <input type="text" id="status" name="status" required><br><br>
+  
+  <button type="submit">Submit</button>
+</form>
+
+
 
 <!-- CDN과 브라우저 환경에서 namespace -->
 <link
@@ -320,79 +347,22 @@
     cal.createEvents(events);
   }
 
-  document.addEventListener("click", function (event) {
-    // 클릭된 요소가 삭제 버튼인지 확인
-    console.log(event); //
-    const key = findKeyPathByValue(event, "event4"); // "b"
-    console.log(key); //
-    if (event.target.classList.contains("toastui-calendar-delete-button")) {
-      // 삭제할 일정의 ID와 달력 ID를 가져옵니다.
-      // 이 값들은 일정을 생성하거나 렌더링할 때 해당 요소에 데이터 속성으로 저장되어 있어야 합니다.
-      console.log(event);
-
-      const key = findKeyPathByValue(event, "event4"); // "b"
-      console.log(key); //
-
-      const scheduleId = event.target.dataset.scheduleId;
-      const calendarId = event.target.dataset.calendarId;
-
-      // Toast UI Calendar의 deleteSchedule 메서드를 호출하여 일정을 삭제합니다.
-      deleteSchedule(scheduleId, calendarId);
-
-      // 변경사항을 반영하기 위해 달력을 다시 렌더링합니다.
-      calendar.render();
-    }
-  });
-
-  function deleteSchedule(a, b) {
-    console.log(a);
-    console.log(b);
-  }
-
-  function findKeyPathByValue(obj, value, path = [], visited = new WeakSet()) {
-    // 객체의 각 키-값 쌍에 대해 반복
-    for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const fullPath = path.concat(key); // 현재 경로에 키 추가
-
-        // 원하는 값과 일치하는 경우, 경로 반환
-        if (obj[key] === value) {
-          return fullPath;
-        } else if (
-          typeof obj[key] === "object" &&
-          obj[key] !== null &&
-          !visited.has(obj[key])
-        ) {
-          // 순환 참조 방지를 위해 방문한 객체에 추가
-          visited.add(obj[key]);
-
-          // 값이 객체인 경우, 재귀적으로 함수 호출
-          const result = findKeyPathByValue(obj[key], value, fullPath, visited);
-          if (result) return result; // 일치하는 값의 경로를 찾은 경우, 반환
-        }
-      }
-    }
-    // 일치하는 값이 없는 경우
-    return null;
-  }
-
-
   function bindInstanceEvents() {
     calendar.on({
       clickMoreEventsBtn: function (btnInfo) {
-        console.log('clickMoreEventsBtn', btnInfo);
+        console.log("clickMoreEventsBtn", btnInfo);
       },
       clickEvent: function (eventInfo) {
-        console.log('clickEvent', eventInfo);
+        console.log("clickEvent", eventInfo);
       },
       clickDayName: function (dayNameInfo) {
-        console.log('clickDayName', dayNameInfo);
+        console.log("clickDayName", dayNameInfo);
       },
       selectDateTime: function (dateTimeInfo) {
-        console.log('selectDateTime', dateTimeInfo);
+        console.log("selectDateTime", dateTimeInfo);
       },
       beforeCreateEvent: function (event) {
-        console.log('beforeCreateEvent', event);
+        console.log("beforeCreateEvent", event);
         event.id = chance.guid();
 
         calendar.createEvents([event]);
@@ -401,7 +371,7 @@
       beforeUpdateEvent: function (eventInfo) {
         var event, changes;
 
-        console.log('beforeUpdateEvent', eventInfo);
+        console.log("beforeUpdateEvent", eventInfo);
 
         event = eventInfo.event;
         changes = eventInfo.changes;
@@ -409,13 +379,13 @@
         calendar.updateEvent(event.id, event.calendarId, changes);
       },
       beforeDeleteEvent: function (eventInfo) {
-        console.log('beforeDeleteEvent', eventInfo);
+        console.log("beforeDeleteEvent", eventInfo);
 
         calendar.deleteEvent(eventInfo.id, eventInfo.calendarId);
       },
     });
   }
-  bindInstanceEvents()
+  bindInstanceEvents();
 </script>
 
 {% endblock %}
